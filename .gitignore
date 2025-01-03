@@ -1,0 +1,6 @@
+env/
+.env
+dataset/
+__pycache__/
+model_weights.pth
+seen.txt
