@@ -31,7 +31,7 @@ def augment(input_dir, output_dir):
     # Create output directory if it doesn't exist
     os.makedirs(output_dir, exist_ok=True)
 
-    for class_name in tqdm(os.listdir(input_dir), desc="Processing classes"):
+    for class_name in os.listdir(input_dir):
         class_path = os.path.join(input_dir, class_name)
         if os.path.isdir(class_path):
             # Create corresponding class folder in output
@@ -41,7 +41,7 @@ def augment(input_dir, output_dir):
             # Iterate over images in the class folder
             for image_name in tqdm(
                 os.listdir(class_path),
-                desc=f"Processing {class_name} images",
+                desc=f"Processing {input_dir} {class_name} images",
                 leave=False,
             ):
                 image_path = os.path.join(class_path, image_name)
