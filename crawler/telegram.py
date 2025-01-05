@@ -1,6 +1,7 @@
 import os
 import httpx
 import io
+import logging
 from dotenv import load_dotenv
 from PIL import Image
 
@@ -29,6 +30,6 @@ def send_message(photo: Image, caption, link_url):
 
     response = httpx.post(url, data=payload, files=files)
     if response.status_code == 200:
-        print("Photo posted successfully")
+        logging.info("Photo posted successfully")
     else:
-        print(f"Failed to post photo: {response.status_code}, {response.text}")
+        logging.error(f"Failed to post photo: {response.status_code}, {response.text}")

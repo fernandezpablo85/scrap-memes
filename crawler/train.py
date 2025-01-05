@@ -5,6 +5,10 @@ from torchvision import datasets, transforms
 from torchvision.models import resnet18
 from torchvision.models import ResNet18_Weights
 from torch.utils.data import DataLoader
+import logging
+import logger
+
+logger.setup_logging()
 
 EPOCHS = 15
 PATIENCE = 3
@@ -49,8 +53,10 @@ def train_model(model, train_loader, val_loader, criterion, optimizer, device):
         val_loss = val_loss / len(val_loader)
         accuracy = 100.0 * correct / total
 
-        print(f"Epoch {epoch + 1}, Train Loss: {running_loss / len(train_loader):.4f}")
-        print(f"Validation Loss: {val_loss:.4f}, Accuracy: {accuracy:.4f}%")
+        logging.info(
+            f"Epoch {epoch + 1}, Train Loss: {running_loss / len(train_loader):.4f}"
+        )
+        logging.info(f"Validation Loss: {val_loss:.4f}, Accuracy: {accuracy:.4f}%")
 
         if val_loss < best_val_loss:
             best_val_loss = val_loss

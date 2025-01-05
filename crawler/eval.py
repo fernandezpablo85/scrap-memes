@@ -5,6 +5,10 @@ from torchvision.models import resnet18
 from torchvision.models import ResNet18_Weights
 from torch.utils.data import DataLoader
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support
+import logging
+import logger
+
+logger.setup_logging()
 
 
 def evaluate_model(model, test_loader, device):
@@ -65,10 +69,10 @@ def main():
 
     # Evaluate the model
     accuracy, precision, recall, f1 = evaluate_model(model, test_loader, device)
-    print(f"Accuracy: {accuracy:.2f}")
-    print(f"Precision: {precision:.2f}")
-    print(f"Recall: {recall:.2f}")
-    print(f"F1 Score: {f1:.2f}")
+    logging.info(f"Accuracy: {accuracy:.2f}")
+    logging.info(f"Precision: {precision:.2f}")
+    logging.info(f"Recall: {recall:.2f}")
+    logging.info(f"F1 Score: {f1:.2f}")
 
 
 if __name__ == "__main__":
