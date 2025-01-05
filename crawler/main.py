@@ -7,6 +7,7 @@ import io
 import voxes
 import logger
 import logging
+import duplicates as dups
 
 # Setup logging
 logger.setup_logging()
@@ -26,13 +27,9 @@ def main(no_post=False):
     unique = set(v["filename"] for v in vxs["voxes"])
     logging.info(f"fetched {len(vxs['voxes'])} voxes, {len(unique)} unique")
 
-    # skip if we've already seen this vox
-    with open(os.path.join(os.path.dirname(__file__), "seen.txt"), "r") as f:
-        seen = f.read().splitlines()
-
     for v in vxs["voxes"]:
         vox_id = v["filename"]
-        if vox_id in seen:
+        if dups.already_seen(vox_id):
             logging.info(f"Skipping already seen vox: '{vox_id}'")
             continue
         logging.info(f"vox '{vox_id}' not seen, processing...")
@@ -45,6 +42,7 @@ def main(no_post=False):
             image = Image.open(io.BytesIO(img_bytes)).convert("RGB")
         except Exception as e:
             logging.error(f"Error while PIL loading image {vox_id}: {e}")
+            continue
 
         if img_response.status_code == 200 and img_response.headers.get(
             "Content-Type", ""
