@@ -2,12 +2,12 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torchvision import datasets, transforms
-from torchvision.models import resnet50, resnet18
-from torchvision.models import ResNet50_Weights, ResNet18_Weights
+from torchvision.models import resnet18
+from torchvision.models import ResNet18_Weights
 from torch.utils.data import DataLoader
 
-EPOCHS = 12
-PATIENCE = 2
+EPOCHS = 15
+PATIENCE = 3
 
 
 def train_model(model, train_loader, val_loader, criterion, optimizer, device):
