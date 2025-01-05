@@ -1,7 +1,13 @@
 import os
 import sqlite3
+import logger
+import logging
+
+logger.setup_logging()
 
 db_file = os.path.join(os.path.dirname(__file__), "seen.db")
+
+logging.info(f"DB path: {db_file}")
 
 # Create table if it doesn't exist
 conn = sqlite3.connect(db_file)
