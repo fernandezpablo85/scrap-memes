@@ -103,7 +103,7 @@ def main():
     model.fc = nn.Sequential(
         nn.Linear(model.fc.in_features, 32),  # Very small dense layer
         nn.ReLU(),
-        nn.Dropout(p=0.25),
+        nn.Dropout(p=0.5),
         nn.Linear(32, 2),  # Final output layer for 2 classes
     )
 
