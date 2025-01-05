@@ -53,14 +53,13 @@ def main(no_post=False):
             logging.info(f"Image saved: https://devox.me/FOO/{vox_id}")
 
             # mark as seen.
-            with open("seen.txt", "a") as f:
-                f.write(vox_id + "\n")
+            dups.mark_already_seen(vox_id)
 
             pred, ypred = classifier.classify(image)
 
             # close to threshold, active learning opportunity.
             if is_close(ypred[0]):
-                logging.info("😲 Close to threshold: {post_id}")
+                logging.info(f"😲 Close to threshold: {vox_id}")
                 logging.info(f"Prediction: {pred}, Confidence: {ypred[0]:.4f}")
 
             # high precision, post message.
