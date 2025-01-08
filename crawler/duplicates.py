@@ -14,7 +14,8 @@ conn = sqlite3.connect(db_file)
 c = conn.cursor()
 c.execute(
     """CREATE TABLE IF NOT EXISTS seen_voxes
-             (vox_id TEXT PRIMARY KEY)"""
+             (vox_id TEXT PRIMARY KEY,
+              score FLOAT)"""
 )
 conn.commit()
 conn.close()
@@ -30,10 +31,16 @@ def already_seen(vox_id: str):
     return exists
 
 
-def mark_already_seen(vox_id: str):
+def mark_already_seen(vox_id: str, score: float):
     vox_id = vox_id.lower().strip()
     conn = sqlite3.connect(db_file)
     c = conn.cursor()
-    c.execute("INSERT OR IGNORE INTO seen_voxes (vox_id) VALUES (?)", (vox_id,))
+    c.execute(
+        "INSERT OR IGNORE INTO seen_voxes (vox_id, score) VALUES (?, ?)",
+        (
+            vox_id,
+            score,
+        ),
+    )
     conn.commit()
     conn.close()

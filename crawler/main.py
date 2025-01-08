@@ -52,15 +52,15 @@ def main(no_post=False):
                 f.write(img_bytes)
             logging.info(f"Image saved: https://devox.me/FOO/{vox_id}")
 
-            # mark as seen.
-            dups.mark_already_seen(vox_id)
-
             pred, ypred = classifier.classify(image)
 
             # close to threshold, active learning opportunity.
             if is_close(ypred[0]):
                 logging.info(f"😲 Close to threshold: {vox_id}")
                 logging.info(f"Prediction: {pred}, Confidence: {ypred[0]:.4f}")
+
+            # mark as seen.
+            dups.mark_already_seen(vox_id, float(ypred[0]))
 
             # high precision, post message.
             if is_certain(ypred[0]) and not no_post:
