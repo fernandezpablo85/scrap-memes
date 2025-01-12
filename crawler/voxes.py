@@ -1,4 +1,10 @@
+from PIL import Image
 import httpx
+import logger
+import logging
+import io
+
+logger.setup_logging()
 
 VOXES_URL = "https://api.devox.me/voxes/getVoxes"
 
@@ -17,4 +23,16 @@ def fetch():
 
 def get_image(post_id: str):
     image_path = f"https://media.devox.re/file/posts-media/{post_id}.jpeg"
-    return httpx.get(image_path, headers=COMMON_HEADERS)
+    img_response = httpx.get(image_path, headers=COMMON_HEADERS)
+    valid_image = img_response.status_code == 200 and img_response.headers.get(
+        "Content-Type", ""
+    ).startswith("image/")
+    if not valid_image:
+        logging.error(f"Error while PIL loading image {post_id}")
+        return None
+    img_bytes = img_response.content
+    try:
+        return Image.open(io.BytesIO(img_bytes)).convert("RGB")
+    except Exception as e:
+        logging.error(f"Error while PIL loading image {post_id}: {e}")
+        return None

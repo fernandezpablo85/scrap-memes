@@ -2,17 +2,17 @@ import os
 import httpx
 import io
 import logging
-from dotenv import load_dotenv
+import logger
 from PIL import Image
 
+logger.setup_logging()
 
-def send_message(photo: Image, caption, link_url):
-    # Load .env from parent directory
-    dotenv_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), ".env")
-    load_dotenv(dotenv_path)
+
+def send_message(photo: Image, caption, link_url, chat_id=None):
 
     bot_token = os.getenv("TELEGRAM_BOT_TOKEN")
-    chat_id = os.getenv("TELEGRAM_CHAT_ID")
+    if chat_id is None:
+        chat_id = os.getenv("TELEGRAM_CHAT_ID")
     url = f"https://api.telegram.org/bot{bot_token}/sendPhoto"
     caption = f"[{caption}]({link_url})"
 
@@ -30,6 +30,6 @@ def send_message(photo: Image, caption, link_url):
 
     response = httpx.post(url, data=payload, files=files)
     if response.status_code == 200:
-        logging.info("Photo posted successfully")
+        logging.info("Photo posted successfully to {chat_id}")
     else:
         logging.error(f"Failed to post photo: {response.status_code}, {response.text}")
