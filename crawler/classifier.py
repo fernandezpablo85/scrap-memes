@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from torchvision.models import resnet50, resnet18
+from torchvision.models import resnet18
 from torchvision import transforms
 from typing import Tuple
 from PIL import Image

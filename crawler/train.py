@@ -2,11 +2,10 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torchvision import datasets, transforms
-from torchvision.models import resnet18
-from torchvision.models import ResNet18_Weights
 from torch.utils.data import DataLoader
 import logging
 import logger
+import classifier
 
 logger.setup_logging()
 
@@ -95,17 +94,13 @@ def main():
     val_loader = DataLoader(val_dataset, batch_size=16, shuffle=False)
 
     # Initialize the model
-    model = resnet18(weights=ResNet18_Weights.DEFAULT)
-    for param in model.parameters():
-        param.requires_grad = False
+    model = classifier.load_model()
 
-    # Replace the classification head with a minimal one
-    model.fc = nn.Sequential(
-        nn.Linear(model.fc.in_features, 32),  # Very small dense layer
-        nn.ReLU(),
-        nn.Dropout(p=0.5),
-        nn.Linear(32, 2),  # Final output layer for 2 classes
-    )
+    for param in model.parameters():
+        param.requires_grad = False  # Freeze all layers
+
+    for param in model.fc.parameters():  # Unfreeze the last layer
+        param.requires_grad = True
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)

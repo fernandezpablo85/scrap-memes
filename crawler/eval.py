@@ -1,12 +1,10 @@
 import torch
-import torch.nn as nn
 from torchvision import datasets, transforms
-from torchvision.models import resnet18
-from torchvision.models import ResNet18_Weights
 from torch.utils.data import DataLoader
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support
 import logging
 import logger
+import classifier
 
 logger.setup_logging()
 
@@ -35,16 +33,7 @@ def evaluate_model(model, test_loader, device):
 
 def main():
     # Load the model
-    model = resnet18(weights=ResNet18_Weights.DEFAULT)
-    model.fc = nn.Sequential(
-        nn.Linear(model.fc.in_features, 32),
-        nn.ReLU(),
-        nn.Dropout(0.3),
-        nn.Linear(32, 2),
-    )
-
-    # Load the weights
-    model.load_state_dict(torch.load("model_weights.pth", weights_only=True))
+    model = classifier.load_model()
     model.eval()  # Set to evaluation mode
     # Set up device
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
