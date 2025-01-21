@@ -1,3 +1,4 @@
+from pathlib import Path
 import classifier
 import telegram
 import argparse
@@ -6,10 +7,13 @@ import logger
 import logging
 import duplicates as dups
 from dotenv import load_dotenv
-import os
+from io import BytesIO
 
 # Setup logging
 logger.setup_logging()
+
+CURRENT_DIR = Path(__file__).resolve().parent
+PARENT_DIR = CURRENT_DIR.parent
 
 
 def is_close(prob: float):
@@ -20,9 +24,9 @@ def is_certain(prob: float):
     return prob > 0.8
 
 
-def main(no_post=False):
+def main(no_post=False, no_store=False):
     # Load .env from parent directory
-    dotenv_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), ".env")
+    dotenv_path = PARENT_DIR / ".env"
     load_dotenv(dotenv_path)
 
     logging.info("Fetching vox data.")
@@ -59,13 +63,29 @@ def main(no_post=False):
             )
         logging.info(f"Prediction: {pred}, Confidence: {ypred[0]:.4f}")
 
+        if not no_store:
+            triage_dir = CURRENT_DIR / "triage"
+            triage_dir.mkdir(exist_ok=True)
+            folder = "class1" if ypred[0] > 0.5 else "class2"
+            (triage_dir / folder).mkdir(exist_ok=True)
+            image_path = triage_dir / folder / f"{vox_id}.jpg"
+            with open(image_path, "wb") as f:
+                img_bytes = BytesIO()
+                image.save(img_bytes, format="JPEG")
+                f.write(img_bytes.getvalue())
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--no-post", action="store_true", help="Do not post to Telegram"
     )
+    parser.add_argument(
+        "--no-store", action="store_true", help="Do not save files to local disk"
+    )
     args = parser.parse_args()
     if args.no_post:
         logging.info("Running in no-post mode - will not post to Telegram")
-    main(no_post=args.no_post)
+    if args.no_store:
+        logging.info("Running in no-store mode - will not save files to local disk")
+    main(no_post=args.no_post, no_store=args.no_store)

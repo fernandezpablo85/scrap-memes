@@ -1,6 +1,7 @@
 env/
 .env
 dataset/
+triage/
 __pycache__/
 model_weights.pth
 seen.txt
